@@ -11,9 +11,7 @@ class SearchController < ApplicationController
   private
 
   def search_params
-    params.require(:vehicles).map do |vehicle|
-      vehicle.permit(:length, :quantity).to_h
-    end
+    params.permit!.to_h
   end
 
   def load_listings
