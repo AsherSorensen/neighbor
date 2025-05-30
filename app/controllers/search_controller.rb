@@ -1,6 +1,5 @@
 class SearchController < ApplicationController
   def search
-    vehicles = search_params
     listings = load_listings
 
     finder = StorageSolutionFinder.new(vehicles_params, listings)
