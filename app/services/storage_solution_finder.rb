@@ -1,45 +1,18 @@
 class StorageSolutionFinder
   def initialize(vehicles, listings)
     @vehicles = vehicles
-    @flat_vehicles = vehicles.flat_map { |v| [v[:length]] * v[:quantity] }
-    @vehicle_perms = unique_permutations(@flat_vehicles)
     @listings = listings
-  end
-
-  def unique_permutations(nums)
-    nums.sort!
-    results = []
-    used = Array.new(nums.length, false)
-  
-    backtrack = lambda do |path|
-      if path.length == nums.length
-        results << path.dup
-        return
-      end
-  
-      (0...nums.length).each do |i|
-        next if used[i]
-        next if i > 0 && nums[i] == nums[i - 1] && !used[i - 1]
-  
-        used[i] = true
-        path << nums[i]
-        backtrack.call(path)
-        path.pop
-        used[i] = false
-      end
-    end
-  
-    backtrack.call([])
-    results
   end
 
   def find_solutions
     listings_by_location = @listings.group_by { |listing| listing['location_id'] }
+    flat_vehicles = @vehicles.flat_map { |v| [v[:length]] * v[:quantity] }
+    vehicle_permutations = unique_permutations(flat_vehicles)
     
     results = []
     
     listings_by_location.each do |location_id, location_listings|
-      solution = find_cheapest_solution(location_listings)
+      solution = find_cheapest_solution(location_listings, vehicle_permutations)
       if solution
         results << {
           location_id: location_id,
@@ -104,12 +77,12 @@ class StorageSolutionFinder
     end
   end
 
-  def find_cheapest_solution(listings)
+  def find_cheapest_solution(listings, vehicle_permutations)
     sorted_listings = listings.sort_by { |l| l['price_in_cents'].to_f }
     best_price = Float::INFINITY
     best_listings = []
     
-    @vehicle_perms.each do |vehicle_permutation|
+    vehicle_permutations.each do |vehicle_permutation|
         total_price = 0
         used_listings = Set.new
         listing_objs = sorted_listings.map { |l| Listing.from_listing_data(l) }
@@ -139,5 +112,32 @@ class StorageSolutionFinder
       listing_ids: best_listings,
       total_price: best_price
     }
+  end
+
+  def unique_permutations(nums)
+    nums.sort!
+    results = []
+    used = Array.new(nums.length, false)
+  
+    backtrack = lambda do |path|
+      if path.length == nums.length
+        results << path.dup
+        return
+      end
+  
+      (0...nums.length).each do |i|
+        next if used[i]
+        next if i > 0 && nums[i] == nums[i - 1] && !used[i - 1]
+  
+        used[i] = true
+        path << nums[i]
+        backtrack.call(path)
+        path.pop
+        used[i] = false
+      end
+    end
+  
+    backtrack.call([])
+    results
   end
 end 
