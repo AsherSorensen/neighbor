@@ -60,8 +60,8 @@ class StorageSolutionFinder
     def self.from_listing_data(data)
       new(
         id: data['id'],
-        length: data['length'],
-        width: data['width'],
+        length: [data['length'], data['width']].max,
+        width: [data['length'], data['width']].min,
         price_in_cents: data['price_in_cents']
       )
     end
