@@ -3,15 +3,17 @@ class SearchController < ApplicationController
     vehicles = search_params
     listings = load_listings
 
-    finder = StorageSolutionFinder.new(vehicles, listings)
+    finder = StorageSolutionFinder.new(vehicles_params, listings)
     results = finder.find_solutions
     render json: results
   end
 
   private
 
-  def search_params
-    params.permit!.to_h
+  def vehicles_params
+    params.require(:search).require(:_json).map do |p|
+      p.permit(:length, :quantity).to_h.symbolize_keys
+    end
   end
 
   def load_listings
