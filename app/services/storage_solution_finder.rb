@@ -47,22 +47,6 @@ class StorageSolutionFinder
       @price_in_cents = price_in_cents
     end
 
-    def can_fit(vehicle_length)
-        return false if vehicle_length > @length
-
-        @used_length.each_with_index do |used_length, i|
-            if vehicle_length + used_length <= @length
-                return i
-            end
-        end
-
-        false
-    end
-
-    def put_vehicle(vehicle_length, index)
-        @used_length[i] += vehicle_length
-    end
-
     def fit_vehicle(vehicle_length)
         return false if vehicle_length > @length
 
