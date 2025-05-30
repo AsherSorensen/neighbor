@@ -13,6 +13,7 @@ class StorageSolutionFinder
     
     listings_by_location.each do |location_id, location_listings|
       solution = find_cheapest_solution(location_listings, vehicle_permutations)
+      
       if solution
         results << {
           location_id: location_id,
@@ -50,47 +51,54 @@ class StorageSolutionFinder
     def fit_vehicle(vehicle_length)
         return false if vehicle_length > @length
 
-        @used_length.each_with_index do |used_length, i|
-            if vehicle_length + used_length <= @length
-                @used_length[i] += vehicle_length
-                return self
-            end
+      @used_length.each_with_index do |used_length, i|
+        if vehicle_length + used_length <= @length
+          @used_length[i] += vehicle_length
+          return self
         end
+      end
 
-        false
+      false
     end
   end
 
   def find_cheapest_solution(listings, vehicle_permutations)
-    sorted_listings = listings.sort_by { |l| l['price_in_cents'].to_f }
     best_price = Float::INFINITY
     best_listings = []
     
+    listing_permutations = listings.permutation.to_a
+    
     vehicle_permutations.each do |vehicle_permutation|
-        total_price = 0
-        used_listings = Set.new
-        listing_objs = sorted_listings.map { |l| Listing.from_listing_data(l) }
-        
-        vehicle_permutation.each do |vehicle|
+      listing_permutations.each do |listing_permutation|
+        catch :invalid_solution do
+            total_price = 0
+            used_listings = Set.new
+            listing_objs = listing_permutation.map { |l| Listing.from_listing_data(l) }
+            
+            vehicle_permutation.each do |vehicle|
             listing = listing_objs.find do |l|
                 next if l.price_in_cents > best_price
                 l.fit_vehicle(vehicle)
             end
             
-            return nil unless listing
+            throw :invalid_solution unless listing
             
             unless used_listings.include?(listing.id)
                 used_listings.add(listing.id)
                 total_price += listing.price_in_cents
                 next if total_price > best_price
             end
-        end
+            end
 
-        if total_price < best_price
-            best_price = total_price
-            best_listings = used_listings.to_a
+            if total_price < best_price
+                best_price = total_price
+                best_listings = used_listings.to_a
+            end
         end
+      end
     end
+
+    return nil if best_price == Float::INFINITY
     
     {
       listing_ids: best_listings,

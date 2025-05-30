@@ -15,7 +15,7 @@ class SearchController < ApplicationController
   end
 
   def load_listings
-    file_path = Rails.root.join('app', 'data', 'listings.json')
+    file_path = Rails.root.join("app", "data", "listings.json")
     JSON.parse(File.read(file_path))
   end
-end 
+end

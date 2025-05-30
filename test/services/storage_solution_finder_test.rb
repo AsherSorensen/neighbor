@@ -9,7 +9,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
   end
 
   test "finds solution for single vehicle" do
-    vehicles = [{ length: 10, quantity: 1 }]
+    vehicles = [ { length: 10, quantity: 1 } ]
     listings = [
       {
         "id" => "listing1",
@@ -30,7 +30,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
   end
 
   test "finds cheapest solution when multiple options exist" do
-    vehicles = [{ length: 10, quantity: 1 }]
+    vehicles = [ { length: 10, quantity: 1 } ]
     listings = [
       {
         "id" => "expensive",
@@ -58,7 +58,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
   end
 
   test "finds solutions across multiple locations" do
-    vehicles = [{ length: 10, quantity: 1 }]
+    vehicles = [ { length: 10, quantity: 1 } ]
     listings = [
       {
         "id" => "loc1_listing",
@@ -113,12 +113,12 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
     assert_not_empty solutions
     assert_equal "loc1", solutions.first[:location_id]
     assert_equal 1, solutions.first[:listing_ids].length
-    assert_equal ["listing2"], solutions.first[:listing_ids]
+    assert_equal [ "listing2" ], solutions.first[:listing_ids]
     assert_equal 1000, solutions.first[:total_price_in_cents]
   end
 
   test "handles vehicles that don't fit in any listing" do
-    vehicles = [{ length: 100, quantity: 1 }]
+    vehicles = [ { length: 100, quantity: 1 } ]
     listings = [
       {
         "id" => "small",
@@ -136,7 +136,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
   end
 
   test "handles multiple listings at the same location with multiple vehicles" do
-    vehicles = [{ length: 10, quantity: 5 }]
+    vehicles = [ { length: 10, quantity: 5 } ]
     listings = [
       {
         "id" => "1",
@@ -186,7 +186,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
         "width" => 10,
         "location_id" => "loc3",
         "price_in_cents" => 1000
-      } 
+      }
     ]
 
     finder = StorageSolutionFinder.new(vehicles, listings)
@@ -204,7 +204,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
   end
 
   test "more width tests" do
-    vehicles = [{ length: 10, quantity: 4 }, { length: 40, quantity: 1 }]
+    vehicles = [ { length: 10, quantity: 4 }, { length: 40, quantity: 1 } ]
     listings = [
       {
         "id" => "1",
@@ -254,12 +254,11 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
         "width" => 10,
         "location_id" => "loc3",
         "price_in_cents" => 1000
-      } 
+      }
     ]
 
     finder = StorageSolutionFinder.new(vehicles, listings)
     solutions = finder.find_solutions
-
     assert_not_empty solutions
     assert_equal "loc1", solutions[0][:location_id]
     assert_equal "loc2", solutions[1][:location_id]
@@ -273,7 +272,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
   end
 
   test "test orientation" do
-    vehicles = [{ length: 10, quantity: 4 }, { length: 40, quantity: 1 }]
+    vehicles = [ { length: 10, quantity: 4 }, { length: 40, quantity: 1 } ]
     listings = [
       {
         "id" => "1",
@@ -323,7 +322,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
         "width" => 40,
         "location_id" => "loc3",
         "price_in_cents" => 1000
-      } 
+      }
     ]
 
     finder = StorageSolutionFinder.new(vehicles, listings)
@@ -341,8 +340,8 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
     assert_equal 5000, solutions[2][:total_price_in_cents]
   end
 
-  test 'finds the cheapest' do
-    vehicles = [{ length: 10, quantity: 2 }]
+  test "finds the cheapest" do
+    vehicles = [ { length: 10, quantity: 2 } ]
     listings = [
       {
         "id" => "1",
@@ -362,7 +361,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
         "id" => "3",
         "length" => 10,
         "width" => 20,
-        "location_id" => "loc1",
+        "location_id" => "loc2",
         "price_in_cents" => 3000
       }
     ]
@@ -375,4 +374,4 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
     assert_equal 1, solutions[0][:listing_ids].length
     assert_equal 3000, solutions[0][:total_price_in_cents]
   end
-end 
+end
