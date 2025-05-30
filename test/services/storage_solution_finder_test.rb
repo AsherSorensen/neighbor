@@ -340,4 +340,39 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
     assert_equal 5, solutions[2][:listing_ids].length
     assert_equal 5000, solutions[2][:total_price_in_cents]
   end
+
+  test 'finds the cheapest' do
+    vehicles = [{ length: 10, quantity: 2 }]
+    listings = [
+      {
+        "id" => "1",
+        "length" => 10,
+        "width" => 10,
+        "location_id" => "loc1",
+        "price_in_cents" => 2000
+      },
+      {
+        "id" => "2",
+        "length" => 10,
+        "width" => 10,
+        "location_id" => "loc1",
+        "price_in_cents" => 2000
+      },
+      {
+        "id" => "3",
+        "length" => 10,
+        "width" => 20,
+        "location_id" => "loc1",
+        "price_in_cents" => 3000
+      }
+    ]
+
+    finder = StorageSolutionFinder.new(vehicles, listings)
+    solutions = finder.find_solutions
+
+    assert_not_empty solutions
+    assert_equal "loc2", solutions[0][:location_id]
+    assert_equal 1, solutions[0][:listing_ids].length
+    assert_equal 3000, solutions[0][:total_price_in_cents]
+  end
 end 
