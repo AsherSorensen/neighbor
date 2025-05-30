@@ -96,7 +96,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
         "length" => 20,
         "width" => 20,
         "location_id" => "loc1",
-        "price_in_cents" => 1000
+        "price_in_cents" => 2000
       },
       {
         "id" => "listing2",
@@ -112,8 +112,9 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
 
     assert_not_empty solutions
     assert_equal "loc1", solutions.first[:location_id]
-    assert_equal 2, solutions.first[:listing_ids].length
-    assert_equal 2000, solutions.first[:total_price_in_cents]
+    assert_equal 1, solutions.first[:listing_ids].length
+    assert_equal ["listing2"], solutions.first[:listing_ids]
+    assert_equal 1000, solutions.first[:total_price_in_cents]
   end
 
   test "handles vehicles that don't fit in any listing" do
@@ -190,10 +191,9 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
 
     finder = StorageSolutionFinder.new(vehicles, listings)
     solutions = finder.find_solutions
-
     assert_not_empty solutions
     assert_equal "loc1", solutions[0][:location_id]
-    assert_equal "loc1", solutions[1][:location_id]
+    assert_equal "loc2", solutions[1][:location_id]
     assert_equal "loc3", solutions[2][:location_id]
     assert_equal 1, solutions[0][:listing_ids].length
     assert_equal 3000, solutions[0][:total_price_in_cents]
@@ -203,7 +203,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
     assert_equal 5000, solutions[2][:total_price_in_cents]
   end
 
-  test "more widhth tests" do
+  test "more width tests" do
     vehicles = [{ length: 10, quantity: 4 }, { length: 40, quantity: 1 }]
     listings = [
       {
@@ -262,7 +262,7 @@ class StorageSolutionFinderTest < ActiveSupport::TestCase
 
     assert_not_empty solutions
     assert_equal "loc1", solutions[0][:location_id]
-    assert_equal "loc1", solutions[1][:location_id]
+    assert_equal "loc2", solutions[1][:location_id]
     assert_equal "loc3", solutions[2][:location_id]
     assert_equal 1, solutions[0][:listing_ids].length
     assert_equal 3000, solutions[0][:total_price_in_cents]
